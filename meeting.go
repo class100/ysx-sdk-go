@@ -7,6 +7,11 @@ import (
 	"time"
 )
 
+type MeetingData struct {
+	Id        string `json:"Id"`
+	MeetingNo uint64 `json:"MeetingNo"`
+}
+
 type meeting struct {
 	host      string
 	apiKey    string
@@ -14,12 +19,7 @@ type meeting struct {
 	apiEcid   string
 }
 
-type MeetingData struct {
-	Id        string `json:"Id"`
-	MeetingNo uint64 `json:"MeetingNo"`
-}
-
-type MeetingResult struct {
+type meetingResult struct {
 	Code    int         `json:"Code"`
 	Message string      `json:"Message"`
 	Data    MeetingData `json:"Data"`
@@ -35,158 +35,86 @@ func newMeeting(host, apiKey, apiSecret, apiEcid string) *meeting {
 }
 
 func (m *meeting) Create(startTime int64, topic, hostId string) (data *MeetingData, err error) {
-	var (
-		url    = fmt.Sprintf("%s/v20/meeting/createScheduledMeeting", m.host)
-		header = req.Header{
-			"Authorization": fmt.Sprintf("Bearer %s", getAPIToken(m.apiKey, m.apiSecret, m.apiEcid)),
-			"Content-Type":  "application/json; charset=utf-8",
-		}
-		params = req.Param{
-			"Topic":                 topic,
-			"Agenda":                "",
-			"Duration":              360,
-			"UTCStartTime":          time.Unix(startTime, 0).In(time.Local).Format("2006-01-02 15:04:05"),
-			"LocalStartTime":        time.Unix(startTime, 0).In(time.Local).UTC().Format("2006-01-02 15:04:05"),
-			"HostId":                hostId,
-			"OpenHostVideo":         true,
-			"OpenParticipantsVideo": true,
-		}
-
-		resp   *req.Resp
-		result = new(MeetingResult)
-	)
-
-	if resp, err = req.Post(url, header, req.BodyJSON(params)); nil != err {
-		return
+	url := fmt.Sprintf("%s/v20/meeting/createScheduledMeeting", m.host)
+	params := req.Param{
+		"Topic":                 topic,
+		"Agenda":                "",
+		"Duration":              360,
+		"UTCStartTime":          time.Unix(startTime, 0).In(time.Local).Format("2006-01-02 15:04:05"),
+		"LocalStartTime":        time.Unix(startTime, 0).In(time.Local).UTC().Format("2006-01-02 15:04:05"),
+		"HostId":                hostId,
+		"OpenHostVideo":         true,
+		"OpenParticipantsVideo": true,
 	}
 
-	if err = resp.ToJSON(result); nil != err {
-		return
-	}
-
-	if 0 != result.Code {
-		return nil, fmt.Errorf("{code=%d, msg=%s}", result.Code, result.Message)
-	}
-
-	return &result.Data, nil
+	return m.postReq(url, params)
 }
 
-func (m *meeting) UpdateScheduleMeeting(startTime int64, ID, topic, hostID string, participants []string) (data *MeetingData, err error) {
-	var (
-		url    = fmt.Sprintf("%s/v20/meeting/update", m.host)
-		header = req.Header{
-			"Authorization": fmt.Sprintf("Bearer %s", getAPIToken(m.apiKey, m.apiSecret, m.apiEcid)),
-			"Content-Type":  "application/json; charset=utf-8",
-		}
-
-		params = req.Param{
-			"id":                    ID,
-			"Topic":                 topic,
-			"Agenda":                "",
-			"Duration":              360,
-			"UTCStartTime":          time.Unix(startTime, 0).In(time.Local).Format("2006-01-02 15:04:05"),
-			"LocalStartTime":        time.Unix(startTime, 0).In(time.Local).UTC().Format("2006-01-02 15:04:05"),
-			"HostId":                hostID,
-			"Participants":          strings.Join(participants, ","),
-			"OpenHostVideo":         true,
-			"OpenParticipantsVideo": true,
-		}
-
-		resp   *req.Resp
-		result = new(MeetingResult)
-	)
-
-	if resp, err = req.Post(url, header, req.BodyJSON(params)); nil != err {
-		return
+func (m *meeting) Update(startTime int64, ID, topic, hostID string, participants []string) (data *MeetingData, err error) {
+	url := fmt.Sprintf("%s/v20/meeting/update", m.host)
+	params := req.Param{
+		"id":                    ID,
+		"Topic":                 topic,
+		"Agenda":                "",
+		"Duration":              360,
+		"UTCStartTime":          time.Unix(startTime, 0).In(time.Local).Format("2006-01-02 15:04:05"),
+		"LocalStartTime":        time.Unix(startTime, 0).In(time.Local).UTC().Format("2006-01-02 15:04:05"),
+		"HostId":                hostID,
+		"Participants":          strings.Join(participants, ","),
+		"OpenHostVideo":         true,
+		"OpenParticipantsVideo": true,
 	}
 
-	if err = resp.ToJSON(&data); err != nil {
-		return
-	}
-
-	if 0 != result.Code {
-		return nil, fmt.Errorf("{code=%d, msg=%s}", result.Code, result.Message)
-	}
-
-	return &result.Data, nil
+	return m.postReq(url, params)
 }
 
-func (m *meeting) DeleteMeeting(id, hostID string) (*MeetingResult, error) {
-	var (
-		data MeetingResult
-	)
-
+func (m *meeting) Delete(id, hostId string) (data *MeetingData, err error) {
 	url := fmt.Sprintf("%s/v20/meeting/delete", m.host)
-	header := req.Header{
-		"Authorization": fmt.Sprintf("Bearer %s", getAPIToken(m.apiKey, m.apiSecret, m.apiEcid)),
-		"Content-Type":  "application/json; charset=utf-8",
-	}
 	params := req.Param{
 		"Id":     id,
-		"HostId": hostID,
-	}
-	resp, err := req.Post(url, header, req.BodyJSON(params))
-	if err != nil {
-		return nil, err
+		"HostId": hostId,
 	}
 
-	if err = resp.ToJSON(&data); err != nil {
-		return nil, err
-	}
-
-	return &data, nil
+	return m.postReq(url, params)
 }
 
-func (m *meeting) EndMeeting(id, hostID string) (*MeetingResult, error) {
-	var (
-		data MeetingResult
-	)
-
+func (m *meeting) End(id, hostId string) (data *MeetingData, err error) {
 	url := fmt.Sprintf("%s/v20/meeting/end", m.host)
-	header := req.Header{
-		"Authorization": fmt.Sprintf("Bearer %s", getAPIToken(m.apiKey, m.apiSecret, m.apiEcid)),
-		"Content-Type":  "application/json; charset=utf-8",
-	}
 	params := req.Param{
 		"Id":     id,
-		"HostId": hostID,
+		"HostId": hostId,
 	}
 
-	resp, err := req.Post(url, header, req.BodyJSON(params))
-	if err != nil {
-		return nil, err
-	}
-
-	if err = resp.ToJSON(&data); err != nil {
-		return nil, err
-	}
-
-	return &data, nil
+	return m.postReq(url, params)
 }
 
-func (m *meeting) GetMeeting(id string) (*MeetingResult, error) {
-	var (
-		data MeetingResult
-	)
-
+func (m *meeting) Get(id string) (data *MeetingData, err error) {
 	url := fmt.Sprintf("%s/v20/meeting/get", m.host)
-	header := req.Header{
-		"Authorization": fmt.Sprintf("Bearer %s", getAPIToken(m.apiKey, m.apiSecret, m.apiEcid)),
-		"Content-Type":  "application/json; charset=utf-8",
-	}
 	params := req.Param{
 		"Id": id,
 	}
 
-	req.Debug = true
-	resp, err := req.Post(url, header, req.BodyJSON(params))
-	if err != nil {
+	return m.postReq(url, params)
+}
+
+func (m *meeting) postReq(url string, params req.Param) (data *MeetingData, err error) {
+	var (
+		resp   *req.Resp
+		result = new(meetingResult)
+
+		header = req.Header{
+			"Authorization": fmt.Sprintf("Bearer %s", getAPIToken(m.apiKey, m.apiSecret, m.apiEcid)),
+			"Content-Type":  "application/json; charset=utf-8",
+		}
+	)
+
+	if resp, err = req.Post(url, header, req.BodyJSON(params)); nil != err {
+		return
+	}
+
+	if err = resp.ToJSON(result); err != nil {
 		return nil, err
 	}
 
-	if err = resp.ToJSON(&data); err != nil {
-		return nil, err
-	}
-
-	return &data, nil
+	return &result.Data, nil
 }

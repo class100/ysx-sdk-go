@@ -17,7 +17,7 @@ type Cfg struct {
 }
 
 var (
-	User    *user
+	User    *virtualUser
 	Meeting *meeting
 )
 
