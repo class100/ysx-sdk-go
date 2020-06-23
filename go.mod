@@ -1,4 +1,4 @@
-module class100/ysx-sdk-go
+module github.com/class100/ysx-sdk-go
 
 go 1.13
 
