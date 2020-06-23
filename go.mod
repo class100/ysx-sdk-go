@@ -1,4 +1,4 @@
-module platform/ysx-sdk-go
+module class100/ysx-sdk-go
 
 go 1.13
 
