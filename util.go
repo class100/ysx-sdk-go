@@ -1,12 +1,13 @@
-package ysxsdk
+package ysx
 
 import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"sort"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 func getUserSign(params map[string]interface{}, key string) string {
@@ -36,11 +37,11 @@ func getSortKey(params map[string]interface{}) []string {
 }
 
 func getAPIToken(apiKey string, apiSecret string, ecid string) string {
-	afterm := time.Now().Add(10 * time.Minute).Unix()
+	exp := time.Now().Add(10 * time.Minute).Unix()
 	claims := jwt.MapClaims{
 		"iss":  apiKey,
 		"ecid": ecid,
-		"exp":  afterm,
+		"exp":  exp,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signStr, _ := token.SignedString([]byte(apiSecret))

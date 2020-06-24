@@ -1,4 +1,4 @@
-package ysxsdk
+package ysx
 
 import (
 	"fmt"
@@ -7,38 +7,40 @@ import (
 	"github.com/imroc/req"
 )
 
-type VirtualUserData struct {
-	VirtualMobile string `json:"vitualMobile"`
-	UserId        string `json:"userId"`
-}
+type (
+	VirtualUserData struct {
+		VirtualMobile string `json:"vitualMobile"`
+		UserId        string `json:"userId"`
+	}
 
-type deleteResult struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-}
+	deleteResult struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}
 
-type virtualUserResult struct {
-	Code    int             `json:"code"`
-	Message string          `json:"msg"`
-	Data    VirtualUserData `json:"data"`
-}
+	virtualUserResult struct {
+		Code    int             `json:"code"`
+		Message string          `json:"msg"`
+		Data    VirtualUserData `json:"data"`
+	}
 
-type tokenResult struct {
-	Code         int    `json:"code"`
-	Message      string `json:"msg"`
-	EnterpriseID string `json:"enterpriseId"`
-	UserID       string `json:"userId"`
-	Username     string `json:"username"`
-	Token        string `jsn:"token"`
-}
+	tokenResult struct {
+		Code         int    `json:"code"`
+		Message      string `json:"msg"`
+		EnterpriseID string `json:"enterpriseId"`
+		UserID       string `json:"userId"`
+		Username     string `json:"username"`
+		Token        string `jsn:"token"`
+	}
 
-type virtualUser struct {
-	host     string
-	identity string
-	orgCode  int
-	ecid     string
-	key      string
-}
+	virtualUser struct {
+		host     string
+		identity string
+		orgCode  int
+		ecid     string
+		key      string
+	}
+)
 
 func newUser(host, identity, ecid, key string, orgCode int) *virtualUser {
 	return &virtualUser{

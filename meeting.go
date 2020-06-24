@@ -1,10 +1,11 @@
-package ysxsdk
+package ysx
 
 import (
 	"fmt"
-	"github.com/imroc/req"
 	"strings"
 	"time"
+
+	"github.com/imroc/req"
 )
 
 type MeetingData struct {

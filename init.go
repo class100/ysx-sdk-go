@@ -1,4 +1,4 @@
-package ysxsdk
+package ysx
 
 import (
 	"github.com/imroc/req"
