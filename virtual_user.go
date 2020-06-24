@@ -8,6 +8,7 @@ import (
 )
 
 type (
+	// 虚拟手机号与ID
 	VirtualUserData struct {
 		VirtualMobile string `json:"vitualMobile"`
 		UserId        string `json:"userId"`
@@ -52,6 +53,7 @@ func newUser(host, identity, ecid, key string, orgCode int) *virtualUser {
 	}
 }
 
+// 创建
 func (u *virtualUser) Create(mobile string, name string, isTrial int8) (data *VirtualUserData, err error) {
 	url := fmt.Sprintf("%s/access/rest/v200/createVirtualUser", u.host)
 	params := req.Param{
@@ -67,6 +69,7 @@ func (u *virtualUser) Create(mobile string, name string, isTrial int8) (data *Vi
 	return u.postReq(url, params)
 }
 
+//更新
 func (u *virtualUser) Update(mobile string, name string) (data *VirtualUserData, err error) {
 	url := fmt.Sprintf("%s/access/rest/v200/modifyVirtualUserInfo", u.host)
 	params := req.Param{
@@ -79,6 +82,7 @@ func (u *virtualUser) Update(mobile string, name string) (data *VirtualUserData,
 	return u.postReq(url, params)
 }
 
+// 删除
 func (u *virtualUser) Delete(virtualMobile string) error {
 	url := fmt.Sprintf("%s/access/rest/v200/deleteVirtualUserInfo", u.host)
 	params := req.Param{
@@ -91,6 +95,7 @@ func (u *virtualUser) Delete(virtualMobile string) error {
 	return u.deleteReq(url, params)
 }
 
+// 获取token
 func (u *virtualUser) GetToken(virtualMobile string) (token string, err error) {
 	var data tokenResult
 

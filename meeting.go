@@ -8,23 +8,26 @@ import (
 	"github.com/imroc/req"
 )
 
-type MeetingData struct {
-	Id        string `json:"Id"`
-	MeetingNo uint64 `json:"MeetingNo"`
-}
+type (
+	// 会议数据
+	MeetingData struct {
+		Id        string `json:"Id"`
+		MeetingNo uint64 `json:"MeetingNo"`
+	}
 
-type meeting struct {
-	host      string
-	apiKey    string
-	apiSecret string
-	apiEcid   string
-}
+	meeting struct {
+		host      string
+		apiKey    string
+		apiSecret string
+		apiEcid   string
+	}
 
-type meetingResult struct {
-	Code    int         `json:"Code"`
-	Message string      `json:"Message"`
-	Data    MeetingData `json:"Data"`
-}
+	meetingResult struct {
+		Code    int         `json:"Code"`
+		Message string      `json:"Message"`
+		Data    MeetingData `json:"Data"`
+	}
+)
 
 func newMeeting(host, apiKey, apiSecret, apiEcid string) *meeting {
 	return &meeting{
@@ -35,6 +38,7 @@ func newMeeting(host, apiKey, apiSecret, apiEcid string) *meeting {
 	}
 }
 
+// 创建会议
 func (m *meeting) Create(startTime int64, topic, hostId string) (data *MeetingData, err error) {
 	url := fmt.Sprintf("%s/v20/meeting/createScheduledMeeting", m.host)
 	params := req.Param{
@@ -51,6 +55,7 @@ func (m *meeting) Create(startTime int64, topic, hostId string) (data *MeetingDa
 	return m.postReq(url, params)
 }
 
+// 更新会议
 func (m *meeting) Update(startTime int64, ID, topic, hostID string, participants []string) (data *MeetingData, err error) {
 	url := fmt.Sprintf("%s/v20/meeting/update", m.host)
 	params := req.Param{
@@ -69,6 +74,7 @@ func (m *meeting) Update(startTime int64, ID, topic, hostID string, participants
 	return m.postReq(url, params)
 }
 
+// 删除会议
 func (m *meeting) Delete(id, hostId string) (data *MeetingData, err error) {
 	url := fmt.Sprintf("%s/v20/meeting/delete", m.host)
 	params := req.Param{
@@ -79,6 +85,7 @@ func (m *meeting) Delete(id, hostId string) (data *MeetingData, err error) {
 	return m.postReq(url, params)
 }
 
+// 结束会议
 func (m *meeting) End(id, hostId string) (data *MeetingData, err error) {
 	url := fmt.Sprintf("%s/v20/meeting/end", m.host)
 	params := req.Param{
@@ -89,6 +96,7 @@ func (m *meeting) End(id, hostId string) (data *MeetingData, err error) {
 	return m.postReq(url, params)
 }
 
+// 获取会议
 func (m *meeting) Get(id string) (data *MeetingData, err error) {
 	url := fmt.Sprintf("%s/v20/meeting/get", m.host)
 	params := req.Param{
