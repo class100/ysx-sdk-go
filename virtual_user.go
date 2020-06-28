@@ -2,6 +2,7 @@ package ysx
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/imroc/req"
@@ -137,6 +138,11 @@ func (u *virtualUser) postReq(url string, params req.Param) (data *VirtualUserDa
 		return nil, fmt.Errorf("{code=%d, msg=%s}", result.Code, result.Message)
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"url":  url,
+		"resp": resp.String(),
+	}).Info("virtualUser post请求成功")
+
 	return &result.Data, nil
 }
 
@@ -159,6 +165,11 @@ func (u *virtualUser) deleteReq(url string, params req.Param) (err error) {
 		return fmt.Errorf("{code=%d, msg=%s}", result.Code, result.Msg)
 	}
 
+	logrus.WithFields(logrus.Fields{
+		"url":  url,
+		"resp": resp.String(),
+	}).Info("virtualUser delete请求成功")
+
 	return
 }
 
@@ -170,6 +181,11 @@ func (u *virtualUser) getReq(url string, params req.Param, data interface{}) (er
 	if resp, err = req.Get(url, params); nil != err {
 		return
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"url":  url,
+		"resp": resp.String(),
+	}).Info("virtualUser get请求成功")
 
 	return resp.ToJSON(data)
 }

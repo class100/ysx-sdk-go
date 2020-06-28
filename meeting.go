@@ -1,11 +1,13 @@
 package ysx
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/imroc/req"
+	"github.com/sirupsen/logrus"
 )
 
 type (
@@ -122,8 +124,13 @@ func (m *meeting) postReq(url string, params req.Param) (data *MeetingData, err 
 	}
 
 	if err = resp.ToJSON(result); err != nil {
-		return nil, err
+		return
 	}
+
+	logrus.WithFields(logrus.Fields{
+		"url":  url,
+		"resp": resp.String(),
+	}).Info("meeting post请求成功")
 
 	return &result.Data, nil
 }
