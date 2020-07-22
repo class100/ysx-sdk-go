@@ -29,7 +29,7 @@ type (
 	}
 
 	CreateTokenResp struct {
-		*VirtualUser
+		VirtualUser
 
 		Token string `json:"token"`
 	}
