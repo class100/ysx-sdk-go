@@ -75,7 +75,7 @@ func JoinMeeting(startTime gox.Timestamp, topic string, hostName string, hostMob
 		return
 	}
 
-	if err = resp.ToJSON(data); err != nil {
+	if err = resp.ToJSON(&data); nil != err {
 		return
 	}
 	return
@@ -86,7 +86,6 @@ func EndMeeting(startTime gox.Timestamp, userId int64, meetingId string,
 	var (
 		resp *req.Resp
 	)
-
 	url := fmt.Sprintf("%s/api/meetings/ends", meetingHost)
 	params := req.Param{
 		"startTime":  startTime,
@@ -98,7 +97,7 @@ func EndMeeting(startTime gox.Timestamp, userId int64, meetingId string,
 	if resp, err = req.Post(url, req.BodyJSON(params)); nil != err {
 		return
 	}
-	if err = resp.ToJSON(data); err != nil {
+	if err = resp.ToJSON(&data); err != nil {
 		return
 	}
 	return

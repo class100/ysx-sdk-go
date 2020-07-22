@@ -48,10 +48,10 @@ func CreateTokenBy(phone string, name string, meetingHost string) (tk *CreateTok
 	if resp, err = req.Post(getTokenUrl, req.BodyJSON(getTokenParams)); nil != err {
 		return
 	}
-
-	if err = resp.ToJSON(tk); err != nil {
+	if err = resp.ToJSON(&tk); err != nil {
 		return
 	}
+
 	return
 }
 
