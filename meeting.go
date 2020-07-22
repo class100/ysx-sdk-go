@@ -1,135 +1,105 @@
-package ysx
+package ysxsdk
 
 import (
-	"fmt"
-	"strings"
-	"time"
+	`fmt`
 
-	"github.com/imroc/req"
-	"github.com/sirupsen/logrus"
+	`github.com/imroc/req`
+	`github.com/storezhang/gox`
 )
 
 type (
 	// 会议数据
 	MeetingData struct {
-		Id        string `json:"Id"`
+		MeetingId string `json:"Id"`
 		MeetingNo uint64 `json:"MeetingNo"`
 	}
 
-	meeting struct {
-		host      string
-		apiKey    string
-		apiSecret string
-		apiEcid   string
+	JoinMeetingReq struct {
+		// 开始时间
+		StartTime gox.Timestamp `json:"startTime" validate:"required"`
+		// 主题
+		Topic string `json:"topic" validate:"required,omitempty,min=1,max=64"`
+		// 主持人手机号
+		HostMobile string `json:"hostMobile" validate:"required,omitempty,alphanum,max=15"`
+		// 主持人名称
+		HostName string `json:"hostName" validate:"required,omitempty,min=2,max=32"`
 	}
 
-	meetingResult struct {
-		Code    int         `json:"Code"`
-		Message string      `json:"Message"`
-		Data    MeetingData `json:"Data"`
+	JoinMeetingResp struct {
+		// 用户ID
+		UserID string `json:"userId"`
+		// 虚拟手机号
+		VirtualMobile string `json:"virtualMobile"`
+		// 用户token
+		UserToken string `json:"userToken"`
+		// 会议Id
+		MeetingId string `json:"meetingId"`
+		// 会议No
+		MeetingNo uint64 `json:"meetingNo"`
+	}
+
+	EndMeetingReq struct {
+		// 开始时间
+		StartTime gox.Timestamp `json:"startTime" validate:"required"`
+		// 用户ID
+		UserID string `json:"userId"`
+		// 会议Id
+		MeetingId string `json:"meetingId"`
+		// 主持人手机号
+		HostMobile string `json:"hostMobile" validate:"required,alphanum,max=15"`
+	}
+
+	EndMeetingResp struct {
+		Data *MeetingData `json:"data"`
 	}
 )
 
-func newMeeting(host, apiKey, apiSecret, apiEcid string) *meeting {
-	return &meeting{
-		host:      host,
-		apiKey:    apiKey,
-		apiSecret: apiSecret,
-		apiEcid:   apiEcid,
-	}
-}
-
-// 创建会议
-func (m *meeting) Create(startTime int64, topic, hostId string) (data *MeetingData, err error) {
-	url := fmt.Sprintf("%s/v20/meeting/createScheduledMeeting", m.host)
-	params := req.Param{
-		"Topic":                 topic,
-		"Agenda":                "",
-		"Duration":              360,
-		"UTCStartTime":          time.Unix(startTime, 0).In(time.Local).Format("2006-01-02 15:04:05"),
-		"LocalStartTime":        time.Unix(startTime, 0).In(time.Local).UTC().Format("2006-01-02 15:04:05"),
-		"HostId":                hostId,
-		"OpenHostVideo":         true,
-		"OpenParticipantsVideo": true,
-	}
-
-	return m.postReq(url, params)
-}
-
-// 更新会议
-func (m *meeting) Update(startTime int64, ID, topic, hostID string, participants []string) (data *MeetingData, err error) {
-	url := fmt.Sprintf("%s/v20/meeting/update", m.host)
-	params := req.Param{
-		"id":                    ID,
-		"Topic":                 topic,
-		"Agenda":                "",
-		"Duration":              360,
-		"UTCStartTime":          time.Unix(startTime, 0).In(time.Local).Format("2006-01-02 15:04:05"),
-		"LocalStartTime":        time.Unix(startTime, 0).In(time.Local).UTC().Format("2006-01-02 15:04:05"),
-		"HostId":                hostID,
-		"Participants":          strings.Join(participants, ","),
-		"OpenHostVideo":         true,
-		"OpenParticipantsVideo": true,
-	}
-
-	return m.postReq(url, params)
-}
-
-// 删除会议
-func (m *meeting) Delete(id, hostId string) (data *MeetingData, err error) {
-	url := fmt.Sprintf("%s/v20/meeting/delete", m.host)
-	params := req.Param{
-		"Id":     id,
-		"HostId": hostId,
-	}
-
-	return m.postReq(url, params)
-}
-
-// 结束会议
-func (m *meeting) End(id, hostId string) (data *MeetingData, err error) {
-	url := fmt.Sprintf("%s/v20/meeting/end", m.host)
-	params := req.Param{
-		"Id":     id,
-		"HostId": hostId,
-	}
-
-	return m.postReq(url, params)
-}
-
-// 获取会议
-func (m *meeting) Get(id string) (data *MeetingData, err error) {
-	url := fmt.Sprintf("%s/v20/meeting/get", m.host)
-	params := req.Param{
-		"Id": id,
-	}
-
-	return m.postReq(url, params)
-}
-
-func (m *meeting) postReq(url string, params req.Param) (data *MeetingData, err error) {
+// startTime 课程开始时间
+// topic 课程名字
+// teacherNickName
+// 至少两种类型的组合
+// 密码长度至少8位 在外边验证
+func JoinMeeting(startTime gox.Timestamp, topic string, hostName string, hostMobile string, meetingHost string) (data *JoinMeetingResp, err error) {
 	var (
-		resp   *req.Resp
-		result = new(meetingResult)
+		resp *req.Resp
+	)
+	url := fmt.Sprintf("%s/api/meetings/join", meetingHost)
+	params := req.Param{
+		"startTime":  startTime,
+		"topic":      topic,
+		"hostMobile": hostMobile,
+		"hostName":   hostName,
+	}
 
-		header = req.Header{
-			"Authorization": fmt.Sprintf("Bearer %s", getAPIToken(m.apiKey, m.apiSecret, m.apiEcid)),
-			"Content-Type":  "application/json; charset=utf-8",
-		}
+	if resp, err = req.Post(url, req.BodyJSON(params)); nil != err {
+		return
+	}
+
+	if err = resp.ToJSON(data); err != nil {
+		return
+	}
+	return
+}
+
+func EndMeeting(startTime gox.Timestamp, userId int64, meetingId string,
+	hostMobile string, meetingHost string) (data *EndMeetingResp, err error) {
+	var (
+		resp *req.Resp
 	)
 
-	if resp, err = req.Post(url, header, req.BodyJSON(params)); nil != err {
-		return
+	url := fmt.Sprintf("%s/api/meetings/ends", meetingHost)
+	params := req.Param{
+		"startTime":  startTime,
+		"userId":     userId,
+		"meetingId":  meetingId,
+		"hostMobile": hostMobile,
 	}
 
-	if err = resp.ToJSON(result); err != nil {
+	if resp, err = req.Post(url, req.BodyJSON(params)); nil != err {
 		return
 	}
-
-	logrus.WithFields(logrus.Fields{
-		"url":  url,
-		"resp": resp.String(),
-	}).Info("meeting post请求成功")
-
-	return &result.Data, nil
+	if err = resp.ToJSON(data); err != nil {
+		return
+	}
+	return
 }
