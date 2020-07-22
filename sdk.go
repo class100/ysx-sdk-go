@@ -1,1 +1,1 @@
-package ysxsdk
+package sdk
