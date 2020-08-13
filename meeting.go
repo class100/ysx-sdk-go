@@ -17,6 +17,9 @@ type (
 	JoinMeetingReq struct {
 		// 开始时间
 		StartTime gox.Timestamp `json:"startTime" validate:"required"`
+		// 持续时间
+		// 单位：分钟
+		Duration int64 `json:"duration" validate:"required"`
 		// 主题
 		Topic string `json:"topic" validate:"required,omitempty,min=1,max=64"`
 		// 主持人手机号
