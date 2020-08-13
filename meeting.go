@@ -2,6 +2,7 @@ package ysx
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/imroc/req"
 	"github.com/storezhang/gox"
@@ -45,6 +46,7 @@ func JoinMeeting(startTime gox.Timestamp, duration int64, topic, hostName, hostM
 	var (
 		resp *req.Resp
 	)
+
 	url := fmt.Sprintf("%s/api/meetings/join", meetingHost)
 	params := req.Param{
 		"startTime":  startTime,
@@ -58,9 +60,15 @@ func JoinMeeting(startTime gox.Timestamp, duration int64, topic, hostName, hostM
 		return
 	}
 
+	if resp.Response().StatusCode != http.StatusOK {
+		err = getErr(resp)
+		return
+	}
+
 	if err = resp.ToJSON(&data); nil != err {
 		return
 	}
+
 	return
 }
 
@@ -77,6 +85,12 @@ func EndMeeting(userId int64, meetingId string, meetingHost string) (data *Meeti
 	if resp, err = req.Post(url, req.BodyJSON(params)); nil != err {
 		return
 	}
+
+	if resp.Response().StatusCode != http.StatusOK {
+		err = getErr(resp)
+		return
+	}
+
 	if err = resp.ToJSON(&data); err != nil {
 		return
 	}

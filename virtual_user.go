@@ -1,13 +1,20 @@
 package ysx
 
 import (
-	`fmt`
+	"fmt"
+	"net/http"
 
-	`github.com/imroc/req`
-	`github.com/storezhang/gox`
+	"github.com/imroc/req"
+	"github.com/storezhang/gox"
 )
 
 type (
+	response struct {
+		ErrorCode int         `json:"errorCode"`
+		Message   string      `json:"message"`
+		Data      interface{} `json:"data"`
+	}
+
 	VirtualUser struct {
 		gox.BaseStruct `xorm:"extends"`
 
@@ -35,6 +42,16 @@ type (
 	}
 )
 
+func getErr(resp *req.Resp) (err error) {
+	var v *response
+	if err = resp.ToJSON(&v); nil != err {
+		return
+	}
+	err = fmt.Errorf(v.Message)
+
+	return
+}
+
 func CreateTokenBy(phone string, name string, meetingHost string) (tk *CreateTokenResp, err error) {
 	var (
 		resp *req.Resp
@@ -48,10 +65,15 @@ func CreateTokenBy(phone string, name string, meetingHost string) (tk *CreateTok
 	if resp, err = req.Post(getTokenUrl, req.BodyJSON(getTokenParams)); nil != err {
 		return
 	}
+
+	if resp.Response().StatusCode != http.StatusOK {
+		err = getErr(resp)
+		return
+	}
+
 	if err = resp.ToJSON(&tk); err != nil {
 		return
 	}
 
 	return
 }
-
