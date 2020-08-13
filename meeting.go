@@ -1,10 +1,10 @@
 package ysx
 
 import (
-	`fmt`
+	"fmt"
 
-	`github.com/imroc/req`
-	`github.com/storezhang/gox`
+	"github.com/imroc/req"
+	"github.com/storezhang/gox"
 )
 
 type (
@@ -28,32 +28,11 @@ type (
 		HostName string `json:"hostName" validate:"required,omitempty,min=2,max=32"`
 	}
 
-	JoinMeetingResp struct {
-		// 用户ID
-		UserID string `json:"userId"`
-		// 虚拟手机号
-		VirtualMobile string `json:"virtualMobile"`
-		// 用户token
-		UserToken string `json:"userToken"`
-		// 会议Id
-		MeetingId string `json:"meetingId"`
-		// 会议No
-		MeetingNo uint64 `json:"meetingNo"`
-	}
-
 	EndMeetingReq struct {
-		// 开始时间
-		StartTime gox.Timestamp `json:"startTime" validate:"required"`
 		// 用户ID
-		UserID string `json:"userId"`
+		UserID string `json:"userId" validate:"required"`
 		// 会议Id
-		MeetingId string `json:"meetingId"`
-		// 主持人手机号
-		HostMobile string `json:"hostMobile" validate:"required,alphanum,max=15"`
-	}
-
-	EndMeetingResp struct {
-		Data *MeetingData `json:"data"`
+		MeetingId string `json:"meetingId" validate:"required"`
 	}
 )
 
@@ -62,13 +41,14 @@ type (
 // teacherNickName
 // 至少两种类型的组合
 // 密码长度至少8位 在外边验证
-func JoinMeeting(startTime gox.Timestamp, topic string, hostName string, hostMobile string, meetingHost string) (data *JoinMeetingResp, err error) {
+func JoinMeeting(startTime gox.Timestamp, duration int64, topic, hostName, hostMobile, meetingHost string) (data *MeetingData, err error) {
 	var (
 		resp *req.Resp
 	)
 	url := fmt.Sprintf("%s/api/meetings/join", meetingHost)
 	params := req.Param{
 		"startTime":  startTime,
+		"duration":   duration,
 		"topic":      topic,
 		"hostMobile": hostMobile,
 		"hostName":   hostName,
@@ -84,17 +64,14 @@ func JoinMeeting(startTime gox.Timestamp, topic string, hostName string, hostMob
 	return
 }
 
-func EndMeeting(startTime gox.Timestamp, userId int64, meetingId string,
-	hostMobile string, meetingHost string) (data *EndMeetingResp, err error) {
+func EndMeeting(userId int64, meetingId string, meetingHost string) (data *MeetingData, err error) {
 	var (
 		resp *req.Resp
 	)
 	url := fmt.Sprintf("%s/api/meetings/ends", meetingHost)
 	params := req.Param{
-		"startTime":  startTime,
-		"userId":     userId,
-		"meetingId":  meetingId,
-		"hostMobile": hostMobile,
+		"userId":    userId,
+		"meetingId": meetingId,
 	}
 
 	if resp, err = req.Post(url, req.BodyJSON(params)); nil != err {
