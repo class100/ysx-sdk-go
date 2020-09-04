@@ -1,13 +1,20 @@
 package ysx
 
 import (
-	`fmt`
+	"fmt"
+	"net/http"
 
-	`github.com/imroc/req`
-	`github.com/storezhang/gox`
+	"github.com/imroc/req"
+	"github.com/storezhang/gox"
 )
 
 type (
+	response struct {
+		ErrorCode int         `json:"errorCode"`
+		Message   string      `json:"message"`
+		Data      interface{} `json:"data"`
+	}
+
 	VirtualUser struct {
 		gox.BaseStruct `xorm:"extends"`
 
@@ -26,8 +33,6 @@ type (
 		Phone string `json:"mobile" validate:"required,alphanum,max=15"`
 		// 名称
 		Name string `json:"name" validate:"required,min=1,max=64"`
-		// 课程时刻
-		CourseTimeId int64 `json:"courseTimeId" validate:"omitempty"`
 	}
 
 	CreateTokenResp struct {
@@ -37,24 +42,38 @@ type (
 	}
 )
 
-func CreateTokenBy(phone string, name string, courseTimeId int64, meetingHost string) (tk *CreateTokenResp, err error) {
+func getErr(resp *req.Resp) (err error) {
+	var v *response
+	if err = resp.ToJSON(&v); nil != err {
+		return
+	}
+	err = fmt.Errorf(v.Message)
+
+	return
+}
+
+func CreateTokenBy(phone string, name string, meetingHost string) (tk *CreateTokenResp, err error) {
 	var (
 		resp *req.Resp
 	)
 	getTokenUrl := fmt.Sprintf("%s/api/virtual/users/token", meetingHost)
 	getTokenParams := req.Param{
-		"mobile":       phone,
-		"name":         name,
-		"courseTimeId": courseTimeId,
+		"mobile": phone,
+		"name":   name,
 	}
 
 	if resp, err = req.Post(getTokenUrl, req.BodyJSON(getTokenParams)); nil != err {
 		return
 	}
+
+	if resp.Response().StatusCode != http.StatusOK {
+		err = getErr(resp)
+		return
+	}
+
 	if err = resp.ToJSON(&tk); err != nil {
 		return
 	}
 
 	return
 }
-
