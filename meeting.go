@@ -29,12 +29,6 @@ type (
 	}
 
 	JoinMeetingResp struct {
-		// 用户ID
-		UserID string `json:"userId"`
-		// 虚拟手机号
-		VirtualMobile string `json:"virtualMobile"`
-		// 用户token
-		UserToken string `json:"userToken"`
 		// 会议Id
 		MeetingId string `json:"meetingId"`
 		// 会议No

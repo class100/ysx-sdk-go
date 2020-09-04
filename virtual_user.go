@@ -26,6 +26,8 @@ type (
 		Phone string `json:"mobile" validate:"required,alphanum,max=15"`
 		// 名称
 		Name string `json:"name" validate:"required,min=1,max=64"`
+		// 课程时刻
+		CourseTimeId int64 `json:"courseTimeId" validate:"omitempty"`
 	}
 
 	CreateTokenResp struct {
@@ -35,14 +37,15 @@ type (
 	}
 )
 
-func CreateTokenBy(phone string, name string, meetingHost string) (tk *CreateTokenResp, err error) {
+func CreateTokenBy(phone string, name string, courseTimeId int64, meetingHost string) (tk *CreateTokenResp, err error) {
 	var (
 		resp *req.Resp
 	)
 	getTokenUrl := fmt.Sprintf("%s/api/virtual/users/token", meetingHost)
 	getTokenParams := req.Param{
-		"mobile": phone,
-		"name":   name,
+		"mobile":       phone,
+		"name":         name,
+		"courseTimeId": courseTimeId,
 	}
 
 	if resp, err = req.Post(getTokenUrl, req.BodyJSON(getTokenParams)); nil != err {
