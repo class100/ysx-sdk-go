@@ -36,7 +36,7 @@ type (
 		// 名称
 		Name string `json:"name" validate:"required,min=1,max=64"`
 		// 课程时刻Id
-		CourseTimeId int64 `json:"courseTimeId,string" validate:"omitempty"`
+		CourseTimeId int64 `json:"courseTimeId" validate:"omitempty"`
 	}
 
 	CreateTokenResp struct {

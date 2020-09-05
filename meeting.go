@@ -28,7 +28,7 @@ type (
 		// 主持人名称
 		HostName string `json:"hostName" validate:"required,omitempty,min=2,max=32"`
 		// 课程时刻Id
-		CourseTimeId int64 `json:"courseTimeId,string" validate:"omitempty"`
+		CourseTimeId int64 `json:"courseTimeId" validate:"omitempty"`
 	}
 
 	EndMeetingReq struct {
