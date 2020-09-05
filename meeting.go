@@ -27,6 +27,8 @@ type (
 		HostMobile string `json:"hostMobile" validate:"required,omitempty,alphanum,max=15"`
 		// 主持人名称
 		HostName string `json:"hostName" validate:"required,omitempty,min=2,max=32"`
+		// 课程时刻Id
+		CourseTimeId int64 `json:"courseTimeId,string" validate:"omitempty"`
 	}
 
 	EndMeetingReq struct {
@@ -42,18 +44,26 @@ type (
 // teacherNickName
 // 至少两种类型的组合
 // 密码长度至少8位 在外边验证
-func JoinMeeting(startTime gox.Timestamp, duration int64, topic, hostName, hostMobile, meetingHost string) (data *MeetingData, err error) {
+func JoinMeeting(
+	courseTimeId int64,
+	startTime gox.Timestamp,
+	duration int64,
+	topic string,
+	hostName, hostMobile string,
+	meetingHost string,
+) (data *MeetingData, err error) {
 	var (
 		resp *req.Resp
 	)
 
 	url := fmt.Sprintf("%s/api/meetings/join", meetingHost)
 	params := req.Param{
-		"startTime":  startTime,
-		"duration":   duration,
-		"topic":      topic,
-		"hostMobile": hostMobile,
-		"hostName":   hostName,
+		"startTime":    startTime,
+		"duration":     duration,
+		"topic":        topic,
+		"hostMobile":   hostMobile,
+		"hostName":     hostName,
+		"courseTimeId": courseTimeId,
 	}
 
 	if resp, err = req.Post(url, req.BodyJSON(params)); nil != err {

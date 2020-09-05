@@ -26,6 +26,8 @@ type (
 		VirtualMobile string `xorm:"varchar(64) notnull default('')" json:"VirtualMobile"`
 		// 虚拟用户id
 		VirtualUserId string `xorm:"varchar(64) notnull default('')" json:"VirtualUserId"`
+		// 课程时刻id
+		CourseTimeId int64 `xorm:"bigint(20) notnull default(1)" json:"courseTimeId,string"`
 	}
 
 	CreateTokenReq struct {
