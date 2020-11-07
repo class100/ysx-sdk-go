@@ -21,7 +21,7 @@ type (
 		// UserId 用户Id
 		UserId int64 `json:"userId,string" validate:"required"`
 		// NickName 用户昵称
-		NickName string `json:"name" validate:"required,min=1,max=64"`
+		Name string `json:"name" validate:"required,min=1,max=64"`
 		// AppId 产品Id
 		AppId int64 `json:"appId,string" validate:"required"`
 		// CourseTimeId 课程时刻Id
