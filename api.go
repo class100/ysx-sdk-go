@@ -7,5 +7,5 @@ const (
 	ApiPathMeetingEnd ApiPath = "meetings/ends"
 
 	// ApiPathCreateToken 获取token
-	ApiPathCreateToken ApiPath = "virtual/users/token"
+	ApiPathCreateToken ApiPath = "tokens"
 )

@@ -4,19 +4,27 @@ import (
 	`github.com/storezhang/gox`
 )
 
-type VirtualUser struct {
-	gox.BaseStruct `xorm:"extends"`
+type (
+	// VirtualUser 虚拟用户数据
+	VirtualUser struct {
+		gox.BaseStruct  `xorm:"extends"`
+		BaseVirtualUser `xorm:"extends"`
 
-	// UserId 用户编号
-	UserId int64 `xorm:"bigint default(0)" json:"userId,string"`
-	// 名称
-	NickName string `xorm:"varchar(32) notnull default('')" json:"nickName"`
-	// AppId 产品编号
-	AppId int64 `xorm:"bigint default(0)" json:"appId,string"`
-	// 课程时刻id
-	CourseTimeId int64 `xorm:"bigint(20) notnull default(1)" json:"courseTimeId,string"`
-	// 会议用虚拟手机号
-	VirtualPhone string `xorm:"varchar(64) notnull default('')" json:"virtualPhone"`
-	// 虚拟用户id
-	VirtualUserId string `xorm:"varchar(64) notnull default('')" json:"VirtualUserId"`
-}
+		// 会议用虚拟手机号
+		VirtualPhone string `xorm:"varchar(64) notnull default('')" json:"virtualPhone"`
+		// 虚拟用户id
+		VirtualUserId string `xorm:"varchar(64) notnull default('')" json:"VirtualUserId"`
+	}
+
+	//  BaseVirtualUser 虚拟用户数据
+	BaseVirtualUser struct {
+		// UserId 用户Id
+		UserId int64 `json:"userId,string" validate:"required"`
+		// NickName 用户昵称
+		NickName string `json:"name" validate:"required,min=1,max=64"`
+		// AppId 产品Id
+		AppId int64 `json:"appId,string" validate:"required"`
+		// CourseTimeId 课程时刻Id
+		CourseTimeId int64 `json:"courseTimeId" validate:"omitempty"`
+	}
+)

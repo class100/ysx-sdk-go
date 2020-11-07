@@ -6,12 +6,12 @@ import (
 
 type meeting interface {
 	// JoinMeeting 加入会议
-	JoinMeeting(jmr *JoinMeetingReq, meetingHost string) (rsp *MeetingData, err error)
+	JoinMeeting(jmr *JoinMeetingReq) (rsp *MeetingData, err error)
 	// EndMeeting 结束会议
 	EndMeeting(emr *EndMeetingReq) (rsp *MeetingData, err error)
 }
 
-func (hsc *httpSignatureClient) JoinMeeting(jmr *JoinMeetingReq, meetingHost string, ) (rsp *MeetingData, err error) {
+func (hsc *httpSignatureClient) JoinMeeting(jmr *JoinMeetingReq) (rsp *MeetingData, err error) {
 	rsp = new(MeetingData)
 	err = hsc.requestApi(
 		ApiPathMeetingJoin,
