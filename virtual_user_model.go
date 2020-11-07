@@ -13,7 +13,7 @@ type (
 		// 会议用虚拟手机号
 		VirtualPhone string `xorm:"varchar(64) notnull default('')" json:"virtualPhone"`
 		// 虚拟用户id
-		VirtualUserId string `xorm:"varchar(64) notnull default('')" json:"VirtualUserId"`
+		VirtualUserId string `xorm:"varchar(64) notnull default('')" json:"virtualUserId"`
 	}
 
 	//  BaseVirtualUser 虚拟用户数据

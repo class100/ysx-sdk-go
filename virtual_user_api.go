@@ -12,7 +12,7 @@ type token interface {
 func (hsc *httpSignatureClient) CreateToken(ctr *CreateTokenReq) (rsp *CreateTokenRsp, err error) {
 	rsp = new(CreateTokenRsp)
 	err = hsc.requestApi(
-		ApiPathMeetingJoin,
+		ApiPathCreateToken,
 		core.HttpMethodPost,
 		ctr,
 		ApiVersionDefault,
