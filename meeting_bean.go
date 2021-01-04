@@ -22,6 +22,10 @@ type (
 	EndMeetingReq struct {
 		// UserId 用户ID
 		UserId int64 `json:"userId" validate:"required"`
+		// AppId 产品编号
+		AppId int64 `json:"appId" validate:"required"`
+		// CourseTimeId 课程时刻编号
+		CourseTimeId int64 `json:"courseTimeId" validate:"required"`
 		// MeetingId 会议Id
 		MeetingId string `json:"meetingId" validate:"required"`
 	}
