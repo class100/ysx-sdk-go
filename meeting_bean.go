@@ -24,5 +24,7 @@ type (
 		UserId int64 `json:"userId" validate:"required"`
 		// MeetingId 会议Id
 		MeetingId string `json:"meetingId" validate:"required"`
+		// AppId 产品编号
+		AppId int64 `json:"appId" validate:"required"`
 	}
 )
