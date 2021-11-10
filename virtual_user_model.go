@@ -1,7 +1,7 @@
 package ysx
 
 import (
-	`github.com/storezhang/gox`
+	"github.com/storezhang/gox"
 )
 
 type (
@@ -16,7 +16,7 @@ type (
 		VirtualUserId string `xorm:"varchar(64) notnull default('')" json:"virtualUserId"`
 	}
 
-	//  BaseVirtualUser 虚拟用户数据
+	// BaseVirtualUser 虚拟用户数据
 	BaseVirtualUser struct {
 		// UserId 用户Id
 		UserId int64 `json:"userId,string" validate:"required"`
