@@ -1,7 +1,7 @@
 package ysx
 
 import (
-	"github.com/storezhang/gox"
+	`github.com/storezhang/gox`
 )
 
 type (
