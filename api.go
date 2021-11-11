@@ -8,4 +8,6 @@ const (
 
 	// ApiPathCreateToken 获取token
 	ApiPathCreateToken ApiPath = "tokens"
+	// ApiPathGetUser 查询用户
+	ApiPathGetUser ApiPath = "users"
 )

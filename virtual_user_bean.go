@@ -13,4 +13,15 @@ type (
 		// Token
 		Token string `json:"token"`
 	}
+
+	// GetUserReq 查询用户的请求
+	GetUserReq struct {
+		// 用户编号
+		UserId int64 `json:"userId,string" validate:"required"`
+	}
+
+	// GetUserRsp 查询用户的响应
+	GetUserRsp struct {
+		*VirtualUser
+	}
 )
