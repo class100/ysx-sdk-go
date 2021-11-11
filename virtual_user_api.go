@@ -27,8 +27,8 @@ func (hsc *httpSignatureClient) CreateToken(ctr *CreateTokenReq) (rsp *CreateTok
 func (hsc *httpSignatureClient) GetUser(req *GetUserReq) (rsp *GetUserRsp, err error) {
 	rsp = new(GetUserRsp)
 	err = hsc.requestApi(
-		ApiPathCreateToken,
-		core.HttpMethodPost,
+		ApiPathGetUser,
+		core.HttpMethodGet,
 		req,
 		ApiVersionDefault,
 		&rsp,
