@@ -18,6 +18,8 @@ type (
 	GetUserReq struct {
 		// 用户编号
 		UserId int64 `json:"userId,string" validate:"required"`
+		// 课节编号
+		CourseTimeId int64 `json:"courseTimeId,string" validate:"required"`
 	}
 
 	// GetUserRsp 查询用户的响应
